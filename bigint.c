@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <stdbool.h>
 
 #include "bigint.h"
 
-const int BASE = 1e4;
+const int BASE = 1e4;   
 const int BASE_LENGTH = 4;
 const char *digitFormat = "%.4d";   //output format
 
@@ -29,7 +26,7 @@ bool isNumber (char *string) {  // check string before converting to bigInt
     return isNumber;
 }
 
-void bigIntPrint(const bigInt* bigOne) {
+void bigIntPrint(const bigInt* bigOne) {    //print
     if (bigOne -> amount == 0) {        // empty variables have .amount = 0
         printf("Unable to print it!\n");
         return;
@@ -45,7 +42,7 @@ void bigIntPrint(const bigInt* bigOne) {
     printf("\n");
 }
 
-bigInt BigInt (char *digitsString) {
+bigInt BigInt (char *digitsString) {    // constructor
     bigInt datBigBoi;   // new bigInt number
     if (!isNumber(digitsString)) {
         if (strlen(digitsString) != 0) {   //empty bigInt numbers are created using "" as digitsString
@@ -74,6 +71,10 @@ bigInt BigInt (char *digitsString) {
             start = 0;
         }
         char *digitsTemp = (char *) malloc(i - start + 1);      // turn current symbols into .digits[i]
+        if (digitsTemp == NULL) {
+            printf("Memory allocation failed");
+            exit(13859);
+        }
         strncpy(digitsTemp, digitsString + start, i - start + 1);
         datBigBoi.digits[pos] = atoi(digitsTemp);
         free(digitsTemp);
@@ -154,7 +155,7 @@ bool equal (const bigInt *a, const bigInt *b) {     // a == b
     return true;
 }
 
-bigInt babs (const bigInt *a) {
+bigInt babs (const bigInt *a) { // |a|
     bigInt newBigBoi = *a;
     newBigBoi.isNegative = false;
     return newBigBoi;
@@ -312,7 +313,7 @@ bigInt mul (const bigInt *a, const bigInt *b) {     // a * b
     return newBigBoi;
 }
 
-bigInt bdiv (const bigInt *a, const bigInt *b) {
+bigInt bdiv (const bigInt *a, const bigInt *b) {    // a / b
     bigInt newBigBoi = BigInt("");
 
     if (b -> amount == 1 && b -> digits[0] == 0) {  // Division by zero
