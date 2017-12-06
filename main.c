@@ -4,36 +4,71 @@
 
 #include "bigint.h"
 
+char *readline() {
+    int size = 16;      // set minimum size of string to 16 bytes
+    char *str = malloc(sizeof(char) * size);
+    if (str == NULL) {
+        printf("Memory allocation failed");
+        exit(13859);
+    }
+    int c;
+    size_t len = 0;
+    while ((c = getchar()) && c != '\r' && c != '\n') {
+        *(str + len) = c;
+        ++len;
+        if (len == size) {     // need to allocate more memory
+            size*= 2;
+            str = (char *)realloc(str, sizeof(str)* size);
+            if (str == NULL) {
+                printf("Memory allocation failed");
+                exit(13859);
+            }
+        }
+    }
+    *(str + len) = '\n';
+    *(str + len + 1) = '\0';
+    return str;
+}
+
 int main() {
-    char aString[10000];
-    char bString[10000];
+    char* aString;
+    char* bString;
     printf("Enter a = ");
-    fgets(aString, sizeof(aString), stdin);
+    aString = readline();
     printf("Enter b = ");
-    fgets(bString, sizeof(bString), stdin);
+    bString = readline();
 
     bigInt a = BigInt(aString);
     bigInt b = BigInt(bString);
-    bigInt c = BigInt("");  // create empty variable
-    bigInt d = BigInt("");
-    bigInt e = BigInt("");
-    bigInt f = BigInt("");
+    bigInt aSumB = BigInt("");  // create empty variable
+    bigInt aSubB = BigInt("");
+    bigInt aMulB = BigInt("");
+    bigInt aDivB = BigInt("");
 
     printf("a = ");
     a.print(&a);
     printf("b = ");
     b.print(&b);
-    c = sum(&a, &b);
+    aSumB = sum(&a, &b);
     printf("a + b = ");
-    c.print(&c);
-    d = sub(&a, &b);
+    aSumB.print(&aSumB);
+    aSubB = sub(&a, &b);
     printf("a - b = ");
-    d.print(&d);
-    e = mul(&a, &b);
+    aSubB.print(&aSubB);
+    aMulB = mul(&a, &b);
     printf("a * b = ");
-    e.print(&e);
-    f = bdiv(&a, &b);
+    aMulB.print(&aMulB);
+    aDivB = bdiv(&a, &b);
     printf("a / b = ");
-    f.print(&f);
+    aDivB.print(&aDivB);
+
+    free(aString);
+    free(bString);
+    DelBigInt(&a);
+    DelBigInt(&b);
+    DelBigInt(&aSumB);
+    DelBigInt(&aSubB);
+    DelBigInt(&aMulB);
+    DelBigInt(&aDivB);
     return 0;
 }
