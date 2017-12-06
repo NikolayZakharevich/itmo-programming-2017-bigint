@@ -7,12 +7,13 @@
 
 typedef struct bigInt {
     int amount;     //quantity of digits
-    int digits[10000];
+    int *digits;
     _Bool isNegative;
     void (*print)(const struct bigInt*);
 } bigInt;
 
 bigInt BigInt (char *digitsString);  // constructor
+bool correctBigInt (const bigInt *a); // check function parameter
 bool more (const bigInt *a, const bigInt *b);   // a > b
 bool left (const bigInt *a, const bigInt *b);   // a < b
 bool equal (const bigInt *a, const bigInt *b);   // a = b
@@ -21,5 +22,6 @@ bigInt sum (const bigInt *a, const bigInt *b);  // a + b
 bigInt sub (const bigInt *a, const bigInt *b);  // a - b
 bigInt mul (const bigInt *a, const bigInt *b);  // a * b
 bigInt bdiv (const bigInt *a, const bigInt *b); // a / b'
+void DelBigInt (bigInt *a);  // destructor
 
 #endif // BIGINT_H
