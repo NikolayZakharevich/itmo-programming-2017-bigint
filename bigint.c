@@ -117,7 +117,7 @@ bool correctBigInt (const bigInt *a) {
 }
 
 bool more (const bigInt *a, const bigInt *b) {      // a > b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(87);
     }
@@ -148,7 +148,7 @@ bool more (const bigInt *a, const bigInt *b) {      // a > b
 }
 
 bool less (const bigInt *a, const bigInt *b) {      // a < b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(87);
     }
@@ -179,7 +179,7 @@ bool less (const bigInt *a, const bigInt *b) {      // a < b
 }
 
 bool equal (const bigInt *a, const bigInt *b) {     // a == b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(87);
     }
@@ -213,7 +213,7 @@ bigInt babs (const bigInt *a) { // |a|
 }
 
 bigInt sum (const bigInt *a, const bigInt *b) {     // a + b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(87);
     }
@@ -279,7 +279,7 @@ bigInt sum (const bigInt *a, const bigInt *b) {     // a + b
 }
 
 bigInt sub (const bigInt *a, const bigInt *b) {    // a - b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(87);
     }
@@ -349,7 +349,7 @@ bigInt sub (const bigInt *a, const bigInt *b) {    // a - b
 }
 
 bigInt mul (const bigInt *a, const bigInt *b) {     // a * b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(87);
     }
@@ -410,7 +410,7 @@ bigInt mul (const bigInt *a, const bigInt *b) {     // a * b
 }
 
 bigInt bdiv (const bigInt *a, const bigInt *b) {    // a / b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(87);
     }
