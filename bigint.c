@@ -428,6 +428,10 @@ bigInt bdiv (const bigInt *a, const bigInt *b) {    // a / b
 
     int *currValue;  // part of number a, which satisfies the condition BASE * b >= currValue
     currValue = (int *) calloc(a -> amount + 1, sizeof(int));
+    if (currValue == NULL) {
+        printf("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
     int i;
     for (i = a -> amount - 1; i >= 0; --i) {
         int j;
@@ -442,6 +446,10 @@ bigInt bdiv (const bigInt *a, const bigInt *b) {    // a / b
         int **currMul, **retMul;    //retMul - last good b*x
         bMulX1 = (int *) calloc (b -> amount + 1, sizeof(int));
         bMulX2 = (int *) calloc (b -> amount + 1, sizeof(int));
+        if (bMulX1 == NULL || bMulX2 == NULL) {
+            printf("Memory allocation failed");
+            exit(EXIT_FAILURE);
+        }
         currMul = &bMulX1;
         retMul = &bMulX2;
 
