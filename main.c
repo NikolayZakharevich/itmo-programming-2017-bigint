@@ -9,7 +9,7 @@ char *readline() {
     char *str = malloc(sizeof(char) * size);
     if (str == NULL) {
         printf("Memory allocation failed");
-        exit(13859);
+        exit(EXIT_FAILURE);
     }
     int c;
     size_t len = 0;
@@ -21,7 +21,7 @@ char *readline() {
             str = (char *)realloc(str, sizeof(str)* size);
             if (str == NULL) {
                 printf("Memory allocation failed");
-                exit(13859);
+                exit(EXIT_FAILURE);
             }
         }
     }
@@ -40,27 +40,23 @@ int main() {
 
     bigInt a = BigInt(aString);
     bigInt b = BigInt(bString);
-    bigInt aSumB = BigInt("");  // create empty variable
-    bigInt aSubB = BigInt("");
-    bigInt aMulB = BigInt("");
-    bigInt aDivB = BigInt("");
 
     printf("a = ");
-    a.print(&a);
+    print(&a);
     printf("b = ");
-    b.print(&b);
-    aSumB = sum(&a, &b);
+    print(&b);
+    bigInt aSumB = sum(&a, &b);
     printf("a + b = ");
-    aSumB.print(&aSumB);
-    aSubB = sub(&a, &b);
+    print(&aSumB);
+    bigInt aSubB = sub(&a, &b);
     printf("a - b = ");
-    aSubB.print(&aSubB);
-    aMulB = mul(&a, &b);
+    print(&aSubB);
+    bigInt aMulB = mul(&a, &b);
     printf("a * b = ");
-    aMulB.print(&aMulB);
-    aDivB = bdiv(&a, &b);
+    print(&aMulB);
+    bigInt aDivB = bdiv(&a, &b);
     printf("a / b = ");
-    aDivB.print(&aDivB);
+    print(&aDivB);
 
     free(aString);
     free(bString);
