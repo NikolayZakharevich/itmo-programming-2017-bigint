@@ -7,18 +7,18 @@ const int BASE = 1e4;
 const int BASE_LENGTH = 4;
 const char *digitFormat = "%.4d";   //output format
 
-bool isNumber (char *string) {  // check string before converting to bigInt
-    if (strlen(string) == 0) {
+bool isNumber (char *string, int strLength) {  // check string before converting to bigInt
+    if (strLength == 0) {
         return false;
     }
     if (isdigit(string[0]) == false) {  // check potential minus
-        if (string[0] != '-' || strlen(string) == 1) {  // '-' is not a number
+        if (string[0] != '-' || strLength == 1) {  // '-' is not a number
             return false;
         }
     }
 
     int i;
-    for (i = 1; i < strlen(string) - 1; ++i) {  // -1 because of '\n'
+    for (i = 1; i < strLength; ++i) {
         if (isdigit(string[i]) == false) {
             return false;
         }
@@ -26,7 +26,7 @@ bool isNumber (char *string) {  // check string before converting to bigInt
     return true;
 }
 
-void bigIntPrint(const bigInt* bigOne) {    //print
+void print(const bigInt* bigOne) {
     if (bigOne -> amount == 0) {        // empty variables have .amount = 0
         printf("Unable to print it!\n");
         return;
@@ -44,14 +44,14 @@ void bigIntPrint(const bigInt* bigOne) {    //print
 
 bigInt BigInt (char *digitsString) {    // constructor
     bigInt datBigBoi;   // new bigInt number
-    if (!isNumber(digitsString)) {
-        if (strlen(digitsString) != 0) {   //empty bigInt numbers are created using "" as digitsString
+    int digitsLen = strlen(digitsString) - 1;   // digitsString has '\n' at the end so digitsLen = strlen() - 1
+    if (!isNumber(digitsString, digitsLen)) {
+        if (digitsLen != -1) {   //empty bigInt numbers are created using "" as digitsString
             printf("It's not a number!\n");
         }
         datBigBoi.amount = 0;
         datBigBoi.isNegative = false;
         datBigBoi.digits = (int *) malloc(sizeof(int));
-        datBigBoi.print = &bigIntPrint;
         return datBigBoi;
     }
 
@@ -62,18 +62,18 @@ bigInt BigInt (char *digitsString) {    // constructor
         else {
             datBigBoi.isNegative = false;
         }
-        strncpy(digitsString, digitsString + 1, strlen(digitsString));
+        strncpy(digitsString, digitsString + 1, digitsLen);
+        --digitsLen;
     }
     else {
         datBigBoi.isNegative = false;
     }
                                                  // turn current symbols into .digits[i]
-    int digitsLen = strlen(digitsString) - 1;   // digitsString has '\n' at the end so digitsLen = strlen() - 1
     int i, pos = 0, decPoint = 1;
     datBigBoi.digits = (int *) malloc(sizeof(int) * (digitsLen / BASE_LENGTH + 5));   // allocate memory to array of digits
     if (datBigBoi.digits == NULL) {
         printf("Memory allocation failed");
-        exit(13859);
+        exit(EXIT_FAILURE);
     }
     datBigBoi.digits[pos] = 0;
 
@@ -93,20 +93,10 @@ bigInt BigInt (char *digitsString) {    // constructor
         --newAmount;
     }
     datBigBoi.amount = newAmount;
-    datBigBoi.print = &bigIntPrint;
     return datBigBoi;
 }
 
 bool correctBigInt (const bigInt *a) {
-    if (a -> amount == NULL) {
-        return false;
-    }
-    if (a -> digits == NULL) {
-        return false;
-    }
-    if (a -> isNegative == NULL) {
-        return false;
-    }
     if (a -> amount <= 0) {
         return false;
     }
@@ -117,9 +107,9 @@ bool correctBigInt (const bigInt *a) {
 }
 
 bool more (const bigInt *a, const bigInt *b) {      // a > b
-    if (!correctBigInt(a) || !correctBigInt(b)) {
+    if (!correctBigInt(a) && correctBigInt(b)) {
         printf("Incorrect bigInt number used");
-        exit(87);
+        exit(EXIT_FAILURE);
     }
 
     _Bool bothNegative = false;
@@ -148,9 +138,9 @@ bool more (const bigInt *a, const bigInt *b) {      // a > b
 }
 
 bool less (const bigInt *a, const bigInt *b) {      // a < b
-    if (!correctBigInt(a) || !correctBigInt(b)) {
+    if (!correctBigInt(a) && correctBigInt(b)) {
         printf("Incorrect bigInt number used");
-        exit(87);
+        exit(EXIT_FAILURE);
     }
 
     _Bool bothNegative = false;
@@ -179,9 +169,9 @@ bool less (const bigInt *a, const bigInt *b) {      // a < b
 }
 
 bool equal (const bigInt *a, const bigInt *b) {     // a == b
-    if (!correctBigInt(a) || !correctBigInt(b)) {
+    if (!correctBigInt(a) && correctBigInt(b)) {
         printf("Incorrect bigInt number used");
-        exit(87);
+        exit(EXIT_FAILURE);
     }
 
     if (a -> isNegative ^ b -> isNegative) {
@@ -204,18 +194,28 @@ bool equal (const bigInt *a, const bigInt *b) {     // a == b
 bigInt babs (const bigInt *a) { // |a|
     if (!correctBigInt(a)) {
         printf("Incorrect bigInt number used");
-        exit(87);
+        exit(EXIT_FAILURE);
     }
 
-    bigInt newBigBoi = *a;
+    bigInt newBigBoi;
+    newBigBoi.digits = (int *) malloc(sizeof(int) * a -> amount);
+    if (newBigBoi.digits == NULL) {
+        printf("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+    int i;
+    for (i = 0; i < a -> amount; ++i) {    // create copy of a
+        newBigBoi.digits[i] = a -> digits[i];
+    }
+    newBigBoi.amount = a -> amount;
     newBigBoi.isNegative = false;
     return newBigBoi;
 }
 
 bigInt sum (const bigInt *a, const bigInt *b) {     // a + b
-    if (!correctBigInt(a) || !correctBigInt(b)) {
+    if (!correctBigInt(a) && correctBigInt(b)) {
         printf("Incorrect bigInt number used");
-        exit(87);
+        exit(EXIT_FAILURE);
     }
 
     bigInt newBigBoi = BigInt("");
@@ -226,11 +226,13 @@ bigInt sum (const bigInt *a, const bigInt *b) {     // a + b
     else if (a -> isNegative) {     // -|a| + b <=> b - |a|
         bigInt absA = babs(a);
         newBigBoi = sub(b, &absA);
+        DelBigInt(&absA);
         return newBigBoi;
     }
     else if (b -> isNegative) {     // a + (-|b|) <=> a - |b|
         bigInt absB = babs(b);
         newBigBoi = sub(a, &absB);
+        DelBigInt(&absB);
         return newBigBoi;
     }
     else {  // just |a| + |b|
@@ -245,14 +247,10 @@ bigInt sum (const bigInt *a, const bigInt *b) {     // a + b
         newBigBoi.amount = b -> amount;
     }
 
-    newBigBoi.digits = (int *) realloc(newBigBoi.digits, sizeof(int) * (newBigBoi.amount + 2));
+    newBigBoi.digits = (int *) calloc(newBigBoi.amount + 2, sizeof(int));
     if (newBigBoi.digits == NULL) {
         printf("Memory allocation failed");
-        exit(13859);
-    }
-
-    for (i = 0; i < newBigBoi.amount + 2; ++i) {
-        newBigBoi.digits[i] = 0;
+        exit(EXIT_FAILURE);
     }
 
     for (i = 0; i < newBigBoi.amount || r != 0; ++i) {
@@ -279,9 +277,9 @@ bigInt sum (const bigInt *a, const bigInt *b) {     // a + b
 }
 
 bigInt sub (const bigInt *a, const bigInt *b) {    // a - b
-    if (!correctBigInt(a) || !correctBigInt(b)) {
+    if (!correctBigInt(a) && correctBigInt(b)) {
         printf("Incorrect bigInt number used");
-        exit(87);
+        exit(EXIT_FAILURE);
     }
 
     bigInt newBigBoi = BigInt("");
@@ -290,17 +288,21 @@ bigInt sub (const bigInt *a, const bigInt *b) {    // a - b
         bigInt absA = babs(a);
         bigInt absB = babs(b);
         newBigBoi = sub(&absB, &absA);
+        DelBigInt(&absA);
+        DelBigInt(&absB);
         return newBigBoi;
     }
     else if (a -> isNegative) {     // -|a| - |b| <=> -(|a| + |b|)
         bigInt absA = babs(a);
         newBigBoi = sum(&absA, b);
+        DelBigInt(&absA);
         newBigBoi.isNegative = true;
         return newBigBoi;
     }
     else if (b -> isNegative) { // a - (-|b|) <=> a + |b|
         bigInt absB = babs(b);
         newBigBoi = sum(a, &absB);
+        DelBigInt(&absB);
         return newBigBoi;
     }
     else {  // just |a| - |b|
@@ -319,7 +321,7 @@ bigInt sub (const bigInt *a, const bigInt *b) {    // a - b
     newBigBoi.digits = (int *) realloc(newBigBoi.digits, sizeof(int) * newBigBoi.amount + 2);
     if (newBigBoi.digits == NULL) {
         printf("Memory allocation failed");
-        exit(13859);
+        exit(EXIT_FAILURE);
     }
 
     for (i = 0; i < newBigBoi.amount; ++i) {    // create copy of a
@@ -349,45 +351,26 @@ bigInt sub (const bigInt *a, const bigInt *b) {    // a - b
 }
 
 bigInt mul (const bigInt *a, const bigInt *b) {     // a * b
-    if (!correctBigInt(a) || !correctBigInt(b)) {
+    if (!correctBigInt(a) && correctBigInt(b)) {
         printf("Incorrect bigInt number used");
-        exit(87);
+        exit(EXIT_FAILURE);
     }
 
     bigInt newBigBoi = BigInt("");
 
-    if (a -> isNegative ^ b -> isNegative) {   // -a * b <=> a * -b <=>  -(|a| * |b|)
-        if (a -> isNegative) {
-            bigInt absA = babs(a);
-            newBigBoi = mul(&absA, b);
-        }
-        else {
-            bigInt absB = babs(b);
-            newBigBoi = mul(a, &absB);
-        }
-        if (!(newBigBoi.amount == 1 && newBigBoi.digits[0] == 0)) {  // != 0
+    if (a -> isNegative ^ b -> isNegative) {   // change sign
+        if (!(a -> amount == 1 && a -> digits[0] == 0) && !(b -> amount == 1 && b -> digits[0] == 0)) {  // != 0
             newBigBoi.isNegative = true;
         }
-        return newBigBoi;
-    }
-    else if (a -> isNegative && b -> isNegative) {  // -a * -b <=> a * b
-        bigInt absA = babs(a);
-        bigInt absB = babs(b);
-        newBigBoi = mul(&absA, &absB);
-        return newBigBoi;
     }
 
-    newBigBoi.digits = (int *) realloc(newBigBoi.digits, sizeof(int) * (a -> amount + b -> amount + 2));
+    newBigBoi.digits = (int *) calloc (a -> amount + b -> amount + 2, sizeof(int));
     if (newBigBoi.digits == NULL) {
         printf("Memory allocation failed");
-        exit(13859);
+        exit(EXIT_FAILURE);
     }
 
     int i, j;
-    for (i = 0; i <= a -> amount + b -> amount; ++i) {   //initialize result digits with 0
-        newBigBoi.digits[i] = 0;
-    }
-
     for (i = 0; i < a -> amount; ++i) {
         int r = 0;
         for (j = 0; j < b -> amount || r != 0; ++j) {
@@ -410,91 +393,102 @@ bigInt mul (const bigInt *a, const bigInt *b) {     // a * b
 }
 
 bigInt bdiv (const bigInt *a, const bigInt *b) {    // a / b
-    if (!correctBigInt(a) || !correctBigInt(b)) {
+    if (!correctBigInt(a) && correctBigInt(b)) {
         printf("Incorrect bigInt number used");
-        exit(87);
+        exit(EXIT_FAILURE);
     }
 
     bigInt newBigBoi = BigInt("");
 
     if (b -> amount == 1 && b -> digits[0] == 0) {  // Division by zero
-        return newBigBoi;
+        printf("Division by zero!");
+        exit(EXIT_FAILURE);
     }
-    if (a -> isNegative ^ b -> isNegative) {   // -a / b <=> a / -b <=>  -(|a| / |b|)
-        if (a -> isNegative) {
-            bigInt absA = babs(a);
-            newBigBoi = bdiv(&absA, b);
-        }
-        else {
-            bigInt absB = babs(b);
-            newBigBoi = bdiv(a, &absB);
-        }
-        if (!(newBigBoi.amount == 1 && newBigBoi.digits[0] == 0)) {  // != 0
+    if (a -> isNegative ^ b -> isNegative) {   // change sign
+        if (!(a -> amount == 1 && a -> digits[0] == 0)) {  // != 0
             newBigBoi.isNegative = true;
         }
-        return newBigBoi;
-    }
-    else if (a -> isNegative && b -> isNegative) {  // -a / -b <=> a / b
-        bigInt absA = babs(a);
-        bigInt absB = babs(b);
-        newBigBoi = bdiv(&absA, &absB);
-        return newBigBoi;
     }
 
-    if (less(a, b)) {
+    bigInt absA = babs(a);
+    bigInt absB = babs(b);
+    if (less(&absA, &absB)) {
         newBigBoi.amount = 1;
         newBigBoi.digits[0] = 0;
         return newBigBoi;
     }
+    DelBigInt(&absA);
+    DelBigInt(&absB);
 
-    bigInt currValue = BigInt("");
-    currValue.amount = 1;
-    currValue.digits = (int *) realloc(currValue.digits, sizeof(int) * (a -> amount + 1));
-    newBigBoi.digits = (int *) realloc(newBigBoi.digits, sizeof(int) * (a -> amount + 1));
-    if (newBigBoi.digits == NULL || currValue.digits == NULL) {
+    newBigBoi.digits = (int *) calloc(a -> amount + 1, sizeof(int));
+    if (newBigBoi.digits == NULL) {
         printf("Memory allocation failed");
-        exit(13859);
+        exit(EXIT_FAILURE);
     }
 
+    int *currValue;  // part of number a, which satisfies the condition BASE * b >= currValue
+    currValue = (int *) calloc(a -> amount + 1, sizeof(int));
     int i;
-    for (i = 0; i <= a -> amount; ++i) {
-        currValue.digits[i] = 0;
-        newBigBoi.digits[i] = 0;
-    }
-
     for (i = a -> amount - 1; i >= 0; --i) {
-        int currIt;
-        for (currIt = currValue.amount; currIt >= 1; --currIt) {    // currValue *= BASE
-            currValue.digits[currIt] = currValue.digits[currIt - 1];
-            if (currValue.digits[currValue.amount] != 0) {
-                ++currValue.amount;
-            }
+        int j;
+        for (j = a -> amount; j >= 1; --j) { // currValue *= BASE
+            currValue[j] = currValue[j - 1];
         }
-        currValue.digits[0] = a -> digits[i];
+        currValue[0] = a -> digits[i];
 
-        int leftBound = 0, rightBound = BASE; // binary search of x such that b * x <= currValue
-        bigInt x = BigInt("");
-        x.amount = 1;
-        bigInt mid = BigInt("");
-        mid.amount = 1;
+        int leftBound = 0, rightBound = BASE; // binary search of max(x) such that b * x <= currValue
+        int x = 0, retX = 0;    // retX - last good x
+        int *bMulX1, *bMulX2;
+        int **currMul, **retMul;    //retMul - last good b*x
+        bMulX1 = (int *) calloc (b -> amount + 1, sizeof(int));
+        bMulX2 = (int *) calloc (b -> amount + 1, sizeof(int));
+        currMul = &bMulX1;
+        retMul = &bMulX2;
+
         while (leftBound <= rightBound) {
-            mid.digits[0] = (leftBound + rightBound) / 2;
-            bigInt bMulX = mul(b, &mid);
-            if (!more(&bMulX, &currValue)) {
-                x.digits[0] = mid.digits[0];
-                leftBound = mid.digits[0] + 1;
+            x = (leftBound + rightBound) >> 1;
+            int r = 0;               // multiplying
+            for (j = 0; j < b -> amount; ++j) {
+                (*currMul)[j] = b -> digits[j] * x + r;
+                r = (*currMul)[j] / BASE;
+                (*currMul)[j] %= BASE;
+            }
+           (*currMul)[j] = r;
+
+            _Bool compare = true; // b * x <= currValue
+            for (j = b -> amount; j >= 0; --j) {    // comparing
+                if ((*currMul)[j] < currValue[j]) {
+                    break;
+                }
+                else if ((*currMul)[j] > currValue[j]) {
+                    compare = false;
+                    break;
+                }
+            }
+            if (compare) {
+                retX = x;
+                int *temp = *currMul; // swap currMul and retMul
+                *currMul = *retMul;
+                *retMul = temp;
+                leftBound = x + 1;
             }
             else {
-                rightBound = mid.digits[0] - 1;
+                rightBound = x - 1;
             }
-            DelBigInt(&bMulX);
         }
-        newBigBoi.digits[i] = x.digits[0];
-        x = mul(b, &x);
-        currValue = sub(&currValue, &x);    // currValue -= b * x
-        DelBigInt(&mid);
-        DelBigInt(&x);
+        newBigBoi.digits[i] = retX;
+        for (j = 0; j <= b -> amount; ++j) {    // currValue -= bMulX;
+            currValue[j] -= (*retMul)[j];
+            if (currValue[j] < 0) {
+                currValue[j] += BASE;
+                --currValue[j + 1];
+            }
+
+        }
+        free(bMulX1);
+        free(bMulX2);
     }
+    free(currValue);
 
     int amount = a -> amount;
     while (amount >= 0 && newBigBoi.digits[amount] == 0) {
@@ -505,8 +499,6 @@ bigInt bdiv (const bigInt *a, const bigInt *b) {    // a / b
 }
 
 void DelBigInt(bigInt *a) {
-    a -> amount = NULL;
+    a -> digits = (int *) realloc(NULL, sizeof(int));
     free(a -> digits);
-    a -> isNegative = NULL;
-    a -> print = NULL;
 }
