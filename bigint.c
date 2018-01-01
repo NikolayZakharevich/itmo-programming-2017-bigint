@@ -107,7 +107,7 @@ bool correctBigInt (const bigInt *a) {
 }
 
 bool more (const bigInt *a, const bigInt *b) {      // a > b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(EXIT_FAILURE);
     }
@@ -138,7 +138,7 @@ bool more (const bigInt *a, const bigInt *b) {      // a > b
 }
 
 bool less (const bigInt *a, const bigInt *b) {      // a < b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(EXIT_FAILURE);
     }
@@ -169,7 +169,7 @@ bool less (const bigInt *a, const bigInt *b) {      // a < b
 }
 
 bool equal (const bigInt *a, const bigInt *b) {     // a == b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(EXIT_FAILURE);
     }
@@ -213,7 +213,7 @@ bigInt babs (const bigInt *a) { // |a|
 }
 
 bigInt sum (const bigInt *a, const bigInt *b) {     // a + b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(EXIT_FAILURE);
     }
@@ -277,7 +277,7 @@ bigInt sum (const bigInt *a, const bigInt *b) {     // a + b
 }
 
 bigInt sub (const bigInt *a, const bigInt *b) {    // a - b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(EXIT_FAILURE);
     }
@@ -351,7 +351,7 @@ bigInt sub (const bigInt *a, const bigInt *b) {    // a - b
 }
 
 bigInt mul (const bigInt *a, const bigInt *b) {     // a * b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(EXIT_FAILURE);
     }
@@ -393,7 +393,7 @@ bigInt mul (const bigInt *a, const bigInt *b) {     // a * b
 }
 
 bigInt bdiv (const bigInt *a, const bigInt *b) {    // a / b
-    if (!correctBigInt(a) && correctBigInt(b)) {
+    if (!correctBigInt(a) || !correctBigInt(b)) {
         printf("Incorrect bigInt number used");
         exit(EXIT_FAILURE);
     }
